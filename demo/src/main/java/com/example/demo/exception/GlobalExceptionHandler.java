@@ -16,12 +16,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<?> handleUserAlreadyExists(UserAlreadyExistsException ex){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage(),"User already exists",HttpStatus.CONFLICT.value()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("User already exists",ex.getMessage(),HttpStatus.CONFLICT.value()));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(),"User not Found", HttpStatus.NOT_FOUND.value()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found",ex.getMessage(),HttpStatus.NOT_FOUND.value()));
     }
 
 }
