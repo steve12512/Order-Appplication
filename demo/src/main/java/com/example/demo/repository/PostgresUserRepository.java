@@ -23,11 +23,13 @@ public class PostgresUserRepository implements  UserRepository{
 
 
     @Override
-    public void saveUser(User user){
+    public boolean saveUser(User user){
+        return  true;
     }
 
     @Override
-    public void deleteUser(int id){
+    public boolean deleteUser(int id){
+        return true;
     }
 
     @Override
