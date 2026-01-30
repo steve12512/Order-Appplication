@@ -61,12 +61,14 @@ public class UserController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10")  int size,
             @RequestParam (defaultValue = "id") String sortBy,
-            @RequestParam @Min(18) int minAge
-//            ,@RequestParam(defaultValue = "") String name
+            @RequestParam @Min(18) int minAge,
+            @RequestParam(defaultValue = "") String name
     )
     {
         Pageable pageable = PageRequest.of(page,size,Sort.by(sortBy));
-        Page<User> users = userService.getUsersOlderThan(minAge, pageable);
+        Page<User> users = (name.isEmpty())?
+                userService.getUsersOlderThan(minAge, pageable)
+                :userService.getUsersOlderThanContains(minAge,name,pageable);
         return users.map(user
                 -> new UserResponse
                 (user.getId(),user.getUsername(),user.getEmail(),user.getAge(),"Successfully retrived user"));

@@ -12,6 +12,7 @@ public interface UserRepository {
     List<User> findAll();
     Page<User> findAll(Pageable pageable);
     Page<User> findByAgeGreaterThanEqual(int minAge, Pageable pageable);
+    Page <User> findByAgeGreaterThanEqualAndUsernameContaining(int minAge, String name, Pageable pageable);
     void deleteById(int id);
     User save(User user);
 

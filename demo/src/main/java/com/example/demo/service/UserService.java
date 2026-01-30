@@ -78,6 +78,11 @@ public class UserService {
     }
 
 
+    public Page<User> getUsersOlderThanContains(int minAge,String name,Pageable pageable){
+       return repository.findByAgeGreaterThanEqualAndUsernameContaining( minAge,name,pageable);
+    }
+
+
 
 
 
