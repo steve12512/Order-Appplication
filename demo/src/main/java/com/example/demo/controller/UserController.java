@@ -67,7 +67,6 @@ public class UserController {
         Page<User> users = (request.username().isEmpty())
                 ?userService.getUsersOlderThan(request.minAge(), pageable)
                 :userService.getUsersAgeGreaterThanEqualAndUsernameContaining(request.minAge(),request.username(),pageable);
-        System.out.println(request.minAge());
         return users.map(user
                 -> new UserResponse
                 (user.getId(),user.getUsername(),user.getEmail(),user.getAge(),"Successfully retrived user"));
