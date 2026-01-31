@@ -61,9 +61,7 @@ public class UserController {
 
     @GetMapping("/filter/search")
     public Page<UserResponse> getUsersOlderThan(
-    @Valid @ModelAttribute UserSearchRequest request
-    )
-    {
+    @Valid @ModelAttribute UserSearchRequest request) {
         Pageable pageable = PageRequest.of(request.page(), request.size(), Sort.by(request.sortBy()));
         Page<User> users = userService.getUsersAgeGreaterThanEqual(request, pageable);
         return users.map(user
