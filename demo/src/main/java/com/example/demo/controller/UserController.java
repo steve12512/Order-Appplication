@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.User;
-import com.example.demo.dto.CreateUserRequest;
-import com.example.demo.dto.UpdateUserEmailRequest;
+import com.example.demo.dto.requests.CreateUserRequest;
+import com.example.demo.dto.requests.UpdateUserEmailRequest;
 import com.example.demo.dto.UserResponse;
-import com.example.demo.dto.UserSearchRequest;
+import com.example.demo.dto.requests.UserSearchRequest;
+import com.example.demo.dto.requests.UserSummaryRequest;
+import com.example.demo.dto.responses.UserSummaryResponse;
 import com.example.demo.exception.InvalidIdException;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -68,6 +70,19 @@ public class UserController {
                 -> new UserResponse
                 (user.getId(),user.getUsername(),user.getEmail(),user.getAge(),"Successfully retrived user"));
     }
+
+    @GetMapping("filter/advanced_search")
+    public Page<UserSummaryResponse> getRankedUsers(UserSummaryRequest request){
+        Page<User> users = userService.getRankedUsers(request);
+        return users.map(user -> new UserSummaryResponse(user.getId(), user.getUsername(), user.getAge(), user.getIsActive()));
+    }
+//{{baseUrl}}/users/filter/advanced_search/?minAge=30&maxAge=50&usernameContains=ccc&isActive=true&size=10&size=20
+
+
+
+
+
+
 
 
     @PostMapping()

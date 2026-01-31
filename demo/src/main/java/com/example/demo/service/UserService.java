@@ -1,14 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.User;
-import com.example.demo.dto.UserSearchRequest;
+import com.example.demo.dto.requests.UserSummaryRequest;
 import com.example.demo.exception.*;
 import com.example.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    public Page<User> getUsersAgeGreaterThanEqual(UserSearchRequest request, Pageable pageable){
+    public Page<User> getUsersAgeGreaterThanEqual(com.example.demo.dto.requests.@Valid  UserSearchRequest request, Pageable pageable){
         return  (request.username().isEmpty())
                 ?this.getUsersOlderThan(request.minAge(), pageable)
                 :this.getUsersAgeGreaterThanEqualAndUsernameContaining(request.minAge(),request.username(),pageable);
@@ -105,6 +105,16 @@ public class UserService {
         repository.save(user);
         return  user;
     }
+
+    public Page<User> getRankedUsers(UserSummaryRequest request){
+        Pageable pageable = (request.pageable() != null )? request.pageable(): PageRequest.of(0,10);
+        int minAge = (request.minAge() != null)?request.minAge():18;
+        int maxAge = (request.maxAge() != null)?request.maxAge():100;
+        String usernameContains = (request.usernameContains() != null)?request.usernameContains():"";
+        Boolean isActive = request.isActive();
+        return repository.findRankedUsers(minAge,maxAge,usernameContains,isActive,pageable);
+    }
+
 
 
 }
