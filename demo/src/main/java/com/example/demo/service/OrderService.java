@@ -42,12 +42,6 @@ public class OrderService {
     }
 
 
-
-
-
-
-
-
     @Transactional
     public Order createOrder(CreateOrderRequest request){
         User user = userRepository.findById(request.userId()).orElseThrow(() -> new UserNotFoundException(request.userId()));

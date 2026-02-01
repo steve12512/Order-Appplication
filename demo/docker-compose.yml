@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:17
+    container_name: spring_db_container
+    environment:
+      POSTGRES_DB: spring_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d spring_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: spring_app_container
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy # This is the secret sauce!
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/spring_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
