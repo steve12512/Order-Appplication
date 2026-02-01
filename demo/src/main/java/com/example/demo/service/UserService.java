@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.User;
-import com.example.demo.dto.requests.UserSummaryRequest;
+import com.example.demo.dto.requests.user_requests.*;
 import com.example.demo.exception.*;
 import com.example.demo.exception.SameEmailException;
 import com.example.demo.exception.UserAlreadyExistsException;
@@ -80,7 +80,7 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    public Page<User> getUsersAgeGreaterThanEqual(com.example.demo.dto.requests.@Valid  UserSearchRequest request, Pageable pageable){
+    public Page<User> getUsersAgeGreaterThanEqual(@Valid  UserSearchRequest request, Pageable pageable){
         return  (request.username().isEmpty())
                 ?this.getUsersOlderThan(request.minAge(), pageable)
                 :this.getUsersAgeGreaterThanEqualAndUsernameContaining(request.minAge(),request.username(),pageable);

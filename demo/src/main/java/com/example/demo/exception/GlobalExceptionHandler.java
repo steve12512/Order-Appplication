@@ -4,6 +4,7 @@ import com.example.demo.dto.responses.user_responses.UserResponse;
 import com.example.demo.exception.item.ItemAlreadyExistsException;
 import com.example.demo.exception.item.ItemErrorResponse;
 import com.example.demo.exception.order.OrderErrorResponse;
+import com.example.demo.exception.order.OrderForUserNotFoundException;
 import com.example.demo.exception.order.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleOrderNotFoundException(OrderNotFoundException ex) {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new OrderErrorResponse("Order not found",HttpStatus.NOT_FOUND.value()));
     }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleOrderForUserNotFoundException(OrderForUserNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new OrderErrorResponse("Order for user with id : " + ex.getUserId() + " was not found",HttpStatus.NOT_FOUND.value()));
+    }
+
+
 
 }

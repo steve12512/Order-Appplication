@@ -13,6 +13,8 @@ import com.example.demo.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,18 @@ public class OrderService {
     public Order findById(Long id){
         return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
     }
+
+    @Transactional
+    public Page<Order> searchByUserIdAndNameContaining(Long userId, String userName, Pageable pageable){
+        Page<Order> orders = orderRepository.findByIdAndUsernameContaining(userId,userName,pageable);
+        if (orders.isEmpty() ) throw  new OrderNotFoundException(userId);
+        return  orders;
+    }
+
+
+
+
+
 
 
 

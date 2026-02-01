@@ -3,12 +3,17 @@ package com.example.demo.controller;
 import com.example.demo.domain.Order;
 import com.example.demo.domain.OrderItem;
 import com.example.demo.dto.requests.order_requests.CreateOrderRequest;
+import com.example.demo.dto.requests.order_requests.SearchOrdersByUserNameRequest;
 import com.example.demo.dto.responses.order_responses.OrderResponse;
 import com.example.demo.dto.responses.user_responses.UserResponse;
 import com.example.demo.service.OrderService;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +39,16 @@ public class OrderController{
     }
 
 
+    @GetMapping("/usernameSearch")
+    @Validated
+    public Page<OrderResponse> getOrdersByUserIdAndNameContaining(@Valid @ModelAttribute SearchOrdersByUserNameRequest request){
+        Pageable pageable = PageRequest.of(request.pageNumber(), request.pageSize(), Sort.by(request.sortBy()));
+        Page<Order> orders =orderService.searchByUserIdAndNameContaining(request.userId(),request.username(),pageable);
+        return  orders.map
+                (order ->new OrderResponse(order.getUser().getId(),order.getId(),order.getOrderItems().stream().
+            map(item -> item.getId()).toList(),order.getUser().getUsername(), order.getCreated_at()));
+
+    }
 
 
     @PostMapping

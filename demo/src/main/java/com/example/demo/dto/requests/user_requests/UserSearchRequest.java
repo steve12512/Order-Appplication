@@ -1,4 +1,4 @@
-package com.example.demo.dto.requests;
+package com.example.demo.dto.requests.user_requests;
 
 import jakarta.validation.constraints.Min;
 
