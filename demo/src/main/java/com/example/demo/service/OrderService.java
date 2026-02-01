@@ -7,9 +7,11 @@ import com.example.demo.domain.User;
 import com.example.demo.dto.requests.order_item_requests.OrderItemRequest;
 import com.example.demo.dto.requests.order_requests.CreateOrderRequest;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.order.OrderNotFoundException;
 import com.example.demo.repository.order.OrderRepository;
 import com.example.demo.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,13 @@ public class OrderService {
     private final OrderRepository  orderRepository;
     private final UserRepository userRepository;
     private final ItemService itemService;
+
+
+    @Transactional
+    public Order findById(Long id){
+        return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+    }
+
 
 
     @Transactional

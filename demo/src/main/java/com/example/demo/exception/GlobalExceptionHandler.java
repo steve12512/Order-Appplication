@@ -3,6 +3,8 @@ package com.example.demo.exception;
 import com.example.demo.dto.responses.user_responses.UserResponse;
 import com.example.demo.exception.item.ItemAlreadyExistsException;
 import com.example.demo.exception.item.ItemErrorResponse;
+import com.example.demo.exception.order.OrderErrorResponse;
+import com.example.demo.exception.order.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -36,6 +38,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<?> handleItemAlreadyExistsException(ItemAlreadyExistsException ex){
         return ResponseEntity.status((HttpStatus.CONFLICT)).body(new ItemErrorResponse("Item already exists",HttpStatus.CONFLICT.value()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleOrderNotFoundException(OrderNotFoundException ex) {
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new OrderErrorResponse("Order not found",HttpStatus.NOT_FOUND.value()));
     }
 
 }
