@@ -13,6 +13,7 @@ public class User {
     int age;
     @Column(nullable = false)
     boolean isActive = true;
+    String password;
 
     public String getUsername() {
         return username;
