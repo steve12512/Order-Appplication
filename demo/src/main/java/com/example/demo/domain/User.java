@@ -99,4 +99,8 @@ public class User implements UserDetails {
         this.age = age;
         this.isActive = isActive;
     }
+
+    public String getRole() {
+        return  role;
+    }
 }
