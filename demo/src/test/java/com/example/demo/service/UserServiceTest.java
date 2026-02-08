@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.example.demo.domain.User;
 import com.example.demo.dto.responses.user_responses.UserResponse;
+import com.example.demo.exception.SameEmailException;
 import com.example.demo.exception.UserAlreadyExistsException;
 import com.example.demo.exception.user.UserNotFoundException;
 import com.example.demo.repository.user.UserRepository;
@@ -75,21 +76,44 @@ public class UserServiceTest {
   }
 
   @Test
-  public void
+  public void testUpdateUserEmail() {
 
+    String new_email = "whatever@hotmail.com";
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, true);
 
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userRepository.save(any(User.class))).thenReturn(user);
 
+    UserResponse mockResponse = userService.updateUserEmail(user.getId(), new_email);
 
+    assertNotNull(mockResponse);
+    assertEquals(user.getId(), mockResponse.getId());
+    assertEquals(user.getUsername(), mockResponse.getUsername());
+    assertEquals(new_email, mockResponse.getEmail());
+    assertEquals(user.getAge(), mockResponse.getAge());
+    assertEquals(user.getIsActive(), mockResponse.getIsActive());
+  }
 
+  @Test
+  public void testUpdateUserEmailThrowsUserNotFoundException() {
+    String new_email = "whatever@hotmail.com";
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, true);
 
+    when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
+    assertThrows(
+        UserNotFoundException.class, () -> userService.updateUserEmail(user.getId(), new_email));
+  }
 
+  @Test
+  public void testUpdateUserEmailThrowsSameEmailException() {
 
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, true);
+    String new_email = user.getEmail();
 
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-
-
-
-
-
+    assertThrows(
+        SameEmailException.class, () -> userService.updateUserEmail(user.getId(), user.getEmail()));
+  }
 }
