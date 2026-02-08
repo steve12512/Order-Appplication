@@ -3,7 +3,9 @@ package com.example.demo.dto.requests.user_requests;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CreateUserRequest {
   @NotBlank String username;
   @Email String email;
@@ -22,11 +24,5 @@ public class CreateUserRequest {
 
   public String getEmail() {
     return email;
-  }
-
-  public CreateUserRequest(String username, String email, int age) {
-    this.username = username;
-    this.email = email;
-    this.age = age;
   }
 }

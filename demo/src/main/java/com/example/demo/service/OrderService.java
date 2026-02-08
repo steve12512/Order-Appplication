@@ -7,6 +7,7 @@ import com.example.demo.domain.User;
 import com.example.demo.dto.requests.order_item_requests.OrderItemRequest;
 import com.example.demo.dto.requests.order_requests.CreateOrderRequest;
 import com.example.demo.dto.requests.order_requests.ModifyOrderRequest;
+import com.example.demo.dto.responses.order_responses.OrderResponse;
 import com.example.demo.exception.item.InsufficientItemQuantityException;
 import com.example.demo.exception.order.OrderNotFoundException;
 import com.example.demo.exception.order.WrongOrderUserIDException;
@@ -25,26 +26,44 @@ public class OrderService {
   private final ItemService itemService;
 
   @Transactional
-  public Order findById(Long id) {
-    return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+  public OrderResponse findById(Long id) {
+    Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+    return new OrderResponse(
+        order.getId(),
+        order.getUser().getId(),
+        order.getOrderItems().stream().map((item) -> item.getId()).toList(),
+        order.getUser().getUsername(),
+        order.getCreated_at());
   }
 
   @Transactional
-  public Page<Order> searchByUserIdAndNameContaining(
+  public Page<OrderResponse> searchByUserIdAndNameContaining(
       Long userId, String userName, Pageable pageable) {
     Page<Order> orders = orderRepository.findByIdAndUsernameContaining(userId, userName, pageable);
     if (orders.isEmpty()) throw new OrderNotFoundException(userId);
-    return orders;
+    return orders.map(
+        order ->
+            new OrderResponse(
+                order.getUser().getId(),
+                order.getId(),
+                order.getOrderItems().stream().map(item -> item.getId()).toList(),
+                order.getUser().getUsername(),
+                order.getCreated_at()));
   }
 
   @Transactional
-  public Order createOrder(CreateOrderRequest request) {
+  public OrderResponse createOrder(CreateOrderRequest request) {
     User user = userService.findUserById(request.userId());
     Order order = new Order();
     order.setUser(user);
     addOrderItemsToOrder(request, order);
     orderRepository.save(order);
-    return order;
+    return new OrderResponse(
+        order.getId(),
+        order.getUser().getId(),
+        order.getOrderItems().stream().map(u -> u.getId()).toList(),
+        order.getUser().getUsername(),
+        order.getCreated_at());
   }
 
   private void addOrderItemsToOrder(CreateOrderRequest request, Order order) {
@@ -79,27 +98,37 @@ public class OrderService {
   }
 
   @Transactional
-  public Order cancelOrder(ModifyOrderRequest request) {
+  public OrderResponse cancelOrder(ModifyOrderRequest request) {
     Order order =
         orderRepository
             .findById(request.orderId())
             .orElseThrow(() -> new OrderNotFoundException(request.orderId()));
     if (order.getUser().getId().equals(request.userId())) {
       order.setStatus("Canceled");
-      return order;
+      return new OrderResponse(
+          order.getId(),
+          order.getUser().getId(),
+          order.getOrderItems().stream().map(orderItem -> orderItem.getId()).toList(),
+          order.getUser().getUsername(),
+          order.getCreated_at());
     }
     throw new WrongOrderUserIDException(request.userId());
   }
 
   @Transactional
-  public Order completeOrder(ModifyOrderRequest request) {
+  public OrderResponse completeOrder(ModifyOrderRequest request) {
     Order order =
         orderRepository
             .findById(request.orderId())
             .orElseThrow(() -> new OrderNotFoundException(request.orderId()));
     if (order.getUser().getId().equals(request.userId())) {
       order.setStatus("Canceled");
-      return order;
+      return new OrderResponse(
+          order.getId(),
+          order.getUser().getId(),
+          order.getOrderItems().stream().map(orderItem -> orderItem.getId()).toList(),
+          order.getUser().getUsername(),
+          order.getCreated_at());
     }
     throw new WrongOrderUserIDException(request.userId());
   }

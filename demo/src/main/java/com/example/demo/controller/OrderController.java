@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.Order;
 import com.example.demo.dto.requests.order_requests.CreateOrderRequest;
 import com.example.demo.dto.requests.order_requests.ModifyOrderRequest;
 import com.example.demo.dto.requests.order_requests.SearchOrdersByUserNameRequest;
@@ -29,13 +28,7 @@ public class OrderController {
   @GetMapping("/{id}")
   @Validated
   public OrderResponse getOrder(@PathVariable @Validated Long id) {
-    Order order = orderService.findById(id);
-    return new OrderResponse(
-        order.getId(),
-        order.getUser().getId(),
-        order.getOrderItems().stream().map(item -> item.getId()).toList(),
-        order.getUser().getUsername(),
-        order.getCreated_at());
+    return orderService.findById(id);
   }
 
   @GetMapping("/usernameSearch")
@@ -44,52 +37,25 @@ public class OrderController {
       @Valid @ModelAttribute SearchOrdersByUserNameRequest request) {
     Pageable pageable =
         PageRequest.of(request.pageNumber(), request.pageSize(), Sort.by(request.sortBy()));
-    Page<Order> orders =
-        orderService.searchByUserIdAndNameContaining(
-            request.userId(), request.username(), pageable);
-    return orders.map(
-        order ->
-            new OrderResponse(
-                order.getUser().getId(),
-                order.getId(),
-                order.getOrderItems().stream().map(item -> item.getId()).toList(),
-                order.getUser().getUsername(),
-                order.getCreated_at()));
+    return orderService.searchByUserIdAndNameContaining(
+        request.userId(), request.username(), pageable);
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public OrderResponse createOrder(@RequestBody @Validated CreateOrderRequest request) {
-    Order order = orderService.createOrder(request);
-    return new OrderResponse(
-        order.getId(),
-        order.getUser().getId(),
-        order.getOrderItems().stream().map(u -> u.getId()).toList(),
-        order.getUser().getUsername(),
-        order.getCreated_at());
+    return orderService.createOrder(request);
   }
 
   @PutMapping("/cancel")
   @Valid
   public OrderResponse cancelOrder(@RequestBody @Validated ModifyOrderRequest request) {
-    Order order = orderService.cancelOrder(request);
-    return new OrderResponse(
-        order.getId(),
-        order.getUser().getId(),
-        order.getOrderItems().stream().map(orderItem -> orderItem.getId()).toList(),
-        order.getUser().getUsername(),
-        order.getCreated_at());
+    return orderService.cancelOrder(request);
   }
 
   @PutMapping("/complete")
   @Valid
   public OrderResponse completeOrder(@RequestBody @Validated ModifyOrderRequest request) {
-    Order order = orderService.completeOrder(request);
-    return new OrderResponse(
-        order.getId(),
-        order.getUser().getId(),
-        order.getOrderItems().stream().map(orderItem -> orderItem.getId()).toList(),
-        order.getUser().getUsername(),
-        order.getCreated_at());
+    return orderService.completeOrder(request);
   }
 }
