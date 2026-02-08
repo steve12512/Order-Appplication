@@ -1,10 +1,7 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "items")
@@ -12,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Item {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +19,5 @@ public class Item {
   Double price;
   String info;
   Integer availableQuantity;
-
-  public Item(String name, Double price, String info) {
-    this.name = name;
-    this.price = price;
-    this.info = info;
-  }
+  @Version Integer version;
 }

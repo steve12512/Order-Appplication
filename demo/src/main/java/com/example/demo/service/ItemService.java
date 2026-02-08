@@ -19,7 +19,8 @@ public class ItemService {
     String name = request.name();
     if (repository.findByName(name) != null)
       throw new ItemAlreadyExistsException("Item with id: " + request.name() + " already exists");
-    Item item = new Item(request.name(), request.price(), request.info());
+    Item item =
+        Item.builder().name(request.name()).price(request.price()).info(request.info()).build();
     repository.save(item);
     return item;
   }
