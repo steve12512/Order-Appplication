@@ -8,6 +8,7 @@ import com.example.demo.domain.User;
 import com.example.demo.dto.responses.user_responses.UserResponse;
 import com.example.demo.exception.SameEmailException;
 import com.example.demo.exception.UserAlreadyExistsException;
+import com.example.demo.exception.UserisAlreadyInactiveException;
 import com.example.demo.exception.user.UserNotFoundException;
 import com.example.demo.repository.user.UserRepository;
 import java.util.Optional;
@@ -115,5 +116,54 @@ public class UserServiceTest {
 
     assertThrows(
         SameEmailException.class, () -> userService.updateUserEmail(user.getId(), user.getEmail()));
+  }
+
+  @Test
+  public void testStUserStatusToInactive() {
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, true);
+    user.setId(11L);
+
+    when(userRepository.findById(11L)).thenReturn(Optional.of(user));
+    when(userRepository.save(user)).thenReturn(user);
+
+    UserResponse mockUserResponse = userService.setUserStatusToInactive(user.getId());
+
+    assertNotNull(mockUserResponse);
+    assertEquals(mockUserResponse.isActive(), false);
+    assertEquals(mockUserResponse.getUsername(), "steve");
+  }
+
+  @Test
+  public void testUserStatusToInactiveThrowsUserNotFoundException() {
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, true);
+    user.setId(11L);
+
+    when(userRepository.findById(11L)).thenReturn(Optional.empty());
+
+    assertThrows(UserNotFoundException.class, () -> userService.setUserStatusToInactive(11L));
+  }
+
+  @Test
+  public void testUserStatusToInactiveThrowsUserIsAlreadyInactiveException() {
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, false);
+    user.setId(11L);
+
+    when(userRepository.findById(11L)).thenReturn(Optional.of(user));
+
+    assertThrows(
+        UserisAlreadyInactiveException.class, () -> userService.setUserStatusToInactive(11L));
+  }
+
+  @Test
+  public void testDeleteById() {
+    User user = new User("steve", "stevekalelis@hotmail.com", 26, false);
+    user.setId(11L);
+
+    when(userRepository.findById(11L)).thenReturn(Optional.of(user));
+
+    UserResponse mockResponse = userService.deleteById(11L);
+
+    assertNotNull(mockResponse);
+    verify(userRepository, times(1)).deleteById(11L);
   }
 }
